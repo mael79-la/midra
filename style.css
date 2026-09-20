@@ -1,67 +1,268 @@
-body {
-    margin: 0;
-    overflow: hidden;
-    background-color: #050510;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    user-select: none;
+
+/* =============================================
+   DRAGON DASH — style.css
+   ============================================= */
+
+:root {
+  --green:  #2ecc71;
+  --blue:   #0088ff;
+  --purple: #8833ff;
+  --red:    #ff4444;
+  --gold:   #ffd700;
+  --bg:     #050518;
 }
 
-#ui {
-    position: absolute;
-    top: 20px;
-    left: 20px;
-    color: white;
-    font-size: 24px;
-    font-weight: bold;
-    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
-    pointer-events: none;
-    z-index: 10;
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0; padding: 0;
+  -webkit-tap-highlight-color: transparent;
+  user-select: none;
 }
 
-#gameover-screen {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    color: white;
-    text-align: center;
-    display: none;
-    background: rgba(0, 0, 0, 0.85);
-    padding: 40px;
-    border-radius: 15px;
-    border: 2px solid #ff4444;
-    box-shadow: 0 0 20px rgba(255, 68, 68, 0.5);
-    z-index: 20;
+html, body {
+  width: 100%; height: 100%;
+  overflow: hidden;
+  background: var(--bg);
+  font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+  color: #fff;
 }
 
-#gameover-screen h1 {
-    margin: 0 0 10px 0;
-    font-size: 42px;
-    color: #ff4444;
+/* Canvas ocupa toda la pantalla */
+#game-canvas {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  display: block;
+  z-index: 0;
 }
 
-#gameover-screen p {
-    font-size: 20px;
-    margin-bottom: 25px;
+/* Capa de UI encima */
+#ui-overlay {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  z-index: 10;
+  pointer-events: none;
 }
 
-#restart-btn {
-    background: #ff4444;
-    color: white;
-    border: none;
-    padding: 12px 30px;
-    font-size: 18px;
-    font-weight: bold;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: background 0.2s, transform 0.1s;
+.hidden { display: none !important; }
+
+/* ---- HUD ---- */
+#hud {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 16px;
+  background: linear-gradient(to bottom, rgba(0,0,0,0.65), transparent);
+  pointer-events: none;
+  z-index: 20;
 }
 
-#restart-btn:hover {
-    background: #cc2222;
+#score-box { display: flex; flex-direction: column; }
+.hud-label {
+  font-size: 9px; letter-spacing: 2.5px;
+  color: #99bbdd; text-transform: uppercase;
+}
+#score {
+  font-size: 32px; font-weight: 900; line-height: 1;
+  text-shadow: 0 0 12px var(--green), 0 0 24px var(--green);
 }
 
-#restart-btn:active {
-    transform: scale(0.95);
+#lives-display {
+  font-size: 22px;
+  filter: drop-shadow(0 0 6px #ff4444);
 }
 
+#btn-pause-game {
+  pointer-events: all;
+  background: rgba(255,255,255,0.1);
+  border: 1px solid rgba(255,255,255,0.2);
+  color: #fff;
+  font-size: 18px;
+  width: 42px; height: 42px;
+  border-radius: 10px;
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  transition: background 0.2s;
+}
+#btn-pause-game:hover { background: rgba(255,255,255,0.22); }
+
+/* Power-up bar */
+#powerup-hud {
+  position: fixed;
+  bottom: 24px; left: 50%;
+  transform: translateX(-50%);
+  display: flex; align-items: center; gap: 10px;
+  background: rgba(0,0,0,0.7);
+  border: 1px solid rgba(255,255,255,0.18);
+  border-radius: 24px;
+  padding: 8px 18px;
+  z-index: 20;
+  pointer-events: none;
+}
+#powerup-icon-hud { font-size: 22px; }
+#powerup-bar {
+  width: 110px; height: 6px;
+  background: rgba(255,255,255,0.18);
+  border-radius: 4px; overflow: hidden;
+}
+#powerup-bar-fill {
+  height: 100%;
+  background: linear-gradient(to right, var(--gold), #ff8800);
+  border-radius: 4px; width: 100%;
+  transition: width 0.1s linear;
+}
+
+/* ---- PANTALLAS ---- */
+[id^="screen-"] {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  padding: 24px 20px;
+  gap: 14px;
+  pointer-events: all;
+  z-index: 30;
+  background: rgba(5,5,24,0.82);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+
+/* ---- MENÚ ---- */
+.logo { text-align: center; margin-bottom: 4px; }
+
+.dragon-emoji {
+  font-size: 68px;
+  display: block;
+  filter: drop-shadow(0 0 22px var(--green));
+  animation: float 3s ease-in-out infinite;
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50%       { transform: translateY(-10px); }
+}
+
+.logo h1 {
+  font-size: clamp(26px, 9vw, 52px);
+  font-weight: 900;
+  letter-spacing: 4px;
+  background: linear-gradient(130deg, var(--green), var(--blue), var(--purple));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  line-height: 1.1;
+  margin-top: 4px;
+}
+
+.logo p {
+  color: #8899cc; font-size: 13px; letter-spacing: 1px; margin-top: 4px;
+}
+
+.controls-info { display: flex; flex-direction: column; gap: 5px; text-align: center; }
+.ctrl {
+  font-size: 12px; color: #7788aa;
+  background: rgba(255,255,255,0.05);
+  padding: 5px 14px; border-radius: 8px;
+  letter-spacing: 0.4px;
+}
+
+/* Dificultad */
+#difficulty-buttons {
+  display: flex; gap: 8px; flex-wrap: wrap; justify-content: center;
+}
+.diff-btn {
+  pointer-events: all; cursor: pointer;
+  background: rgba(255,255,255,0.07);
+  border: 1px solid rgba(255,255,255,0.13);
+  color: #888; padding: 8px 16px;
+  border-radius: 20px; font-size: 13px; font-weight: 600;
+  transition: all 0.2s;
+}
+.diff-btn:hover, .diff-btn.selected {
+  background: rgba(46,204,113,0.18);
+  border-color: var(--green);
+  color: var(--green);
+}
+
+/* Botones */
+.btn-main, .btn-sec {
+  pointer-events: all; cursor: pointer;
+  border: none; border-radius: 14px;
+  font-size: 16px; font-weight: 700;
+  padding: 14px 0; width: 100%; max-width: 300px;
+  letter-spacing: 1px;
+  transition: transform 0.15s, box-shadow 0.15s;
+}
+.btn-main {
+  background: linear-gradient(135deg, #2ecc71, #00aa55);
+  color: #fff;
+  box-shadow: 0 4px 22px rgba(46,204,113,0.38);
+}
+.btn-main:hover, .btn-main:active {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 28px rgba(46,204,113,0.6);
+}
+.btn-sec {
+  background: rgba(255,255,255,0.08);
+  color: #aaa;
+  border: 1px solid rgba(255,255,255,0.14);
+}
+.btn-sec:hover, .btn-sec:active {
+  background: rgba(255,255,255,0.15); color: #fff;
+}
+
+#best-score-display {
+  color: var(--gold); font-size: 14px;
+  filter: drop-shadow(0 0 8px rgba(255,215,0,0.5));
+}
+
+/* ---- GAME OVER ---- */
+.go-icon { font-size: 64px; animation: goShake 0.5s; }
+@keyframes goShake {
+  0%,100% { transform: rotate(0); }
+  25% { transform: rotate(-8deg) translateX(-4px); }
+  75% { transform: rotate(8deg) translateX(4px); }
+}
+#screen-gameover h2 {
+  font-size: clamp(22px, 7vw, 34px); font-weight: 900;
+  letter-spacing: 2px; color: var(--red);
+  text-shadow: 0 0 22px var(--red);
+}
+.go-scores { text-align: center; }
+.go-scores div { color: #99bbdd; font-size: 15px; margin-bottom: 4px; }
+.go-scores strong { color: #fff; font-size: 22px; }
+
+/* ---- PAUSA ---- */
+#screen-pause h2 {
+  font-size: 34px; font-weight: 900;
+  letter-spacing: 3px; color: #aaccff;
+}
+
+/* ---- POPUP ---- */
+#popup-msg {
+  position: fixed;
+  top: 75px; left: 50%;
+  transform: translateX(-50%) translateY(-16px);
+  background: rgba(0,0,0,0.82);
+  color: #fff; font-size: 17px; font-weight: 700;
+  padding: 9px 22px; border-radius: 28px;
+  border: 1px solid rgba(255,255,255,0.18);
+  pointer-events: none; z-index: 100;
+  opacity: 0;
+  transition: opacity 0.25s, transform 0.25s;
+  white-space: nowrap;
+}
+#popup-msg.visible {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+
+/* Resplandor verde alrededor del dragón (shield) */
+@keyframes shieldPulse {
+  0%,100% { opacity: 0.4; }
+  50% { opacity: 0.8; }
+}
