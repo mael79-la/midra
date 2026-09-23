@@ -2,7 +2,32 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
+
+  <!-- ===== PWA META TAGS ===== -->
+  <meta name="application-name" content="Dragon Dash">
+  <meta name="description" content="Esquiva obstáculos con tu dragón en un mundo 3D lleno de magia">
+  <meta name="theme-color" content="#06061c">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Dragon Dash">
+  <meta name="msapplication-TileColor" content="#06061c">
+  <meta name="msapplication-TileImage" content="icons/icon-144x144.png">
+
+  <!-- ===== FAVICON ===== -->
+  <link rel="icon" type="image/png" sizes="32x32" href="icons/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="icons/favicon-16x16.png">
+  <link rel="shortcut icon" href="icons/favicon-32x32.png">
+
+  <!-- ===== APPLE TOUCH ICONS ===== -->
+  <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+  <link rel="apple-touch-icon" sizes="152x152" href="icons/icon-152x152.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="icons/icon-180x180.png">
+
+  <!-- ===== PWA MANIFEST ===== -->
+  <link rel="manifest" href="manifest.json">
+
   <title>Dragon Dash 🐉</title>
   <link rel="stylesheet" href="style.css">
 </head>
@@ -32,7 +57,7 @@
     <!-- MENÚ PRINCIPAL -->
     <div id="screen-menu">
       <div class="logo">
-        <span class="dragon-emoji">🐉</span>
+        <img src="icons/icon-128x128.png" alt="Dragon Dash" class="logo-img">
         <h1>DRAGON DASH</h1>
         <p>Esquiva todos los obstáculos</p>
       </div>
@@ -51,6 +76,7 @@
 
     <!-- PAUSA -->
     <div id="screen-pause" class="hidden">
+      <img src="icons/icon-96x96.png" alt="" class="pause-icon">
       <h2>⏸ PAUSA</h2>
       <button id="btn-resume" class="btn-main">▶ CONTINUAR</button>
       <button id="btn-pause-quit" class="btn-sec">🏠 MENÚ</button>
@@ -58,7 +84,7 @@
 
     <!-- GAME OVER -->
     <div id="screen-gameover" class="hidden">
-      <div class="go-icon">💀</div>
+      <img src="icons/icon-128x128.png" alt="" class="go-icon-img">
       <h2>JUEGO TERMINADO</h2>
       <div class="go-scores">
         <div>Puntuación: <strong id="go-score">0</strong></div>
@@ -73,8 +99,20 @@
   <!-- Mensaje flotante -->
   <div id="popup-msg"></div>
 
+  <!-- ===== SCRIPTS ===== -->
   <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/build/three.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/OBJLoader.js"></script>
   <script src="game.js"></script>
+
+  <!-- ===== SERVICE WORKER ===== -->
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/midra/sw.js', { scope: '/midra/' })
+          .then(reg => console.log('[SW] Registrado:', reg.scope))
+          .catch(err => console.warn('[SW] Error:', err));
+      });
+    }
+  </script>
 </body>
 </html>

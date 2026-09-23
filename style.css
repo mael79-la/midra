@@ -266,3 +266,33 @@ html, body {
   0%,100% { opacity: 0.4; }
   50% { opacity: 0.8; }
 }
+
+/* PWA logo en menú */
+.logo-img {
+  width: 100px; height: 100px;
+  object-fit: contain;
+  filter: drop-shadow(0 0 20px #8833ff) drop-shadow(0 0 40px #2ecc71);
+  animation: float 3s ease-in-out infinite;
+  margin-bottom: 4px;
+}
+
+/* Ícono en game over */
+.go-icon-img {
+  width: 90px; height: 90px;
+  object-fit: contain;
+  filter: drop-shadow(0 0 16px #ff4444) saturate(0.6) brightness(0.8);
+  animation: goShake 0.5s ease-in-out;
+  margin-bottom: 4px;
+}
+
+/* Ícono en pausa */
+.pause-icon {
+  width: 70px; height: 70px;
+  object-fit: contain;
+  filter: drop-shadow(0 0 12px #8833ff);
+  opacity: 0.85;
+  margin-bottom: 8px;
+}
+
+/* Quitar emoji del logo (ahora usa imagen) */
+.dragon-emoji { display: none; }
